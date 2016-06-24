@@ -21,6 +21,15 @@
         android:textStyle="bold"
         android:text=" Grab the deals.." />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fetch Data"
+        android:id="@+id/btnFetchData"
+        android:onClick="FetchData"
+        android:layout_gravity="right" />
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="fill_parent"

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -46,7 +47,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-
+            Toast toast = Toast.makeText(getApplicationContext(), "You got entered in range",Toast.LENGTH_LONG );
+            toast.show();
             Log.d("tag","entered in event");
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);

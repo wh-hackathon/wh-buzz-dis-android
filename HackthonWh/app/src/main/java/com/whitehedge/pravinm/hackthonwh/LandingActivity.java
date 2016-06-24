@@ -114,7 +114,7 @@ Log.d("tag","deleted");
             mGeofenceList.add(new Geofence.Builder().setRequestId("Myfirst")
                     .setCircularRegion(
                             18.5156040, 73.7819050,
-                            10000
+                            500
                     )
                     .setExpirationDuration(99999999)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |

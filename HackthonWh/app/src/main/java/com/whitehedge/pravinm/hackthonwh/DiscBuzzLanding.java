@@ -1,11 +1,15 @@
 package com.whitehedge.pravinm.hackthonwh;
 
+import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +23,27 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class DiscBuzzLanding extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,7 +53,6 @@ public class DiscBuzzLanding extends AppCompatActivity
     ArrayList prgmName;
     public static int[] prgmImages = {R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera};
     public static String[] prgmNameList = {"jayhind selection, Pune", "Mcdonalds, kothrud, pune", "jayhind selection, Aundh", "Ramesh dying, Pune", "Park Avenue, Kothrud, Pune", "KFC ,Deccan, Pune", "CityPride multiplex, Kothrud, Pune", "Dominos pizza, Bavdhan, Pune", "JavaScript"};
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +64,8 @@ public class DiscBuzzLanding extends AppCompatActivity
         context = this;
 
         lv = (ListView) findViewById(R.id.listView);
+        //  lv.setOnItemClickListener(onItemClickListener);
+
         lv.setAdapter(new DealsAdapater(this, prgmNameList, prgmImages));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -73,29 +98,55 @@ public class DiscBuzzLanding extends AppCompatActivity
         }
     }
 
-    public void Like(View view)
-    {
+
+    public void FetchData(View view) {
+        try {
+
+            new PostClass(getApplicationContext()).execute("pm");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+    private String getPostDataString(ContentValues params) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : params.valueSet()) {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
+
+    public void Like(View view) {
         ImageButton likebtn = (ImageButton) findViewById(R.id.btnLike);
         likebtn.setImageResource(R.drawable.red_heart);
-        Toast toast = Toast.makeText(context, "test Like ",Toast.LENGTH_SHORT );
+        Toast toast = Toast.makeText(context, "test Like ", Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void Navigate(View view) {
+        Toast toast = Toast.makeText(context, "test navigate ", Toast.LENGTH_SHORT);
         toast.show();
 
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=18.5074,73.8077&mode=d");
+        //            String s =result[position].replace(" ","+");
+        //              Uri gmmIntentUri = Uri.parse("google.navigation:q="+s+"&mode=d");
+        // Uri gmmIntentUri = Uri.parse("google.navigation:q=Jayhind+Selection,+Pune,+Maharashtra &mode=d");
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        context.startActivity(mapIntent);
 
     }
-    public void Navigate(View view)
-    {
-        Toast toast = Toast.makeText(context, "test navigate ",Toast.LENGTH_SHORT );
-        toast.show();
 
-   Uri gmmIntentUri = Uri.parse("google.navigation:q=18.5074,73.8077&mode=d");
-    //            String s =result[position].replace(" ","+");
-  //              Uri gmmIntentUri = Uri.parse("google.navigation:q="+s+"&mode=d");
-                // Uri gmmIntentUri = Uri.parse("google.navigation:q=Jayhind+Selection,+Pune,+Maharashtra &mode=d");
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                context.startActivity(mapIntent);
-
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -133,5 +184,102 @@ public class DiscBuzzLanding extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private class PostClass extends AsyncTask<String, Void, Void> {
+
+        private final Context context;
+
+        public PostClass(Context c){
+            this.context = c;
+        }
+
+        protected void onPreExecute(){
+            /*progress= new ProgressDialog(this.context);
+            progress.setMessage("Loading");
+            progress.show();
+        */}
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            try {
+               // Thread.sleep(1000);
+                Log.d("pm","enter in async"+ params[0]);
+
+                // final TextView outputView = (TextView) findViewById(R.id.showOutput);
+                URL url = new URL("https://buzz-dis.herokuapp.com/tags/get-all-by-location-open");
+
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+
+                connection.setRequestProperty("Content-Type","application/json");
+                ContentValues params1 = new ContentValues();
+                params1.put("latitude", "18.523331");
+                params1.put("longitude", "73.7775214");
+                params1.put("distance", "2");
+
+                connection.setRequestMethod("POST");
+              //   connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
+              //  connection.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+                connection.setDoOutput(true);
+                DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
+                dStream.writeBytes(getPostDataString(params1));
+                dStream.flush();
+                dStream.close();
+                int responseCode = connection.getResponseCode();
+
+                final StringBuilder output = new StringBuilder("Request URL " + url);
+           //     output.append(System.getProperty("line.separator") + "Request Parameters " + urlParameters);
+                output.append(System.getProperty("line.separator")  + "Response Code " + responseCode);
+                output.append(System.getProperty("line.separator")  + "Type " + "POST");
+                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line = "";
+                StringBuilder responseOutput = new StringBuilder();
+                System.out.println("output===============" + br);
+                while((line = br.readLine()) != null ) {
+                    responseOutput.append(line);
+                }
+                br.close();
+                Log.d("pm",responseOutput.toString());
+                output.append(System.getProperty("line.separator") + "Response " + System.getProperty("line.separator") + System.getProperty("line.separator") + responseOutput.toString());
+
+                DiscBuzzLanding.this.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Log.d("op",output.toString());
+                        //outputView.setText(output);
+                        //progress.dismiss();
+                    }
+                });
+
+            } catch (MalformedURLException e) {
+                // TODO Auto-generated catch block
+                Log.d("pm","err");
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                Log.d("pm","err");
+            }
+            return null;
+        }
+        private String getPostDataString(ContentValues params) throws UnsupportedEncodingException {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+            for (Map.Entry<String, Object> entry : params.valueSet()) {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
+
     }
 }
