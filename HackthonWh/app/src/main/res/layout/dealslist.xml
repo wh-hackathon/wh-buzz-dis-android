@@ -18,12 +18,12 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView1"
-            android:layout_width="334dp"
+            android:id="@+id/txtShopName"
+            android:layout_width="350dp"
             android:layout_height="fill_parent"
             android:layout_gravity="center_vertical"
-            android:text="TextView"
-            android:textSize="25dp" />
+            android:text="TextView" android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -32,39 +32,60 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/txtBanner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:layout_weight="0.70"
+                android:layout_weight="0.50"
                 android:gravity="start"
-                android:text="50% OFF"
+                android:text="pm"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/txtLatLong"
+                android:layout_width="0px"
+                android:layout_height="0px"
+                android:text="pm"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="invisible" />
+
 
             <ImageButton
                 android:id="@+id/btnNavigate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="Navigate" android:background="@null"
+                android:layout_weight="0.25"
+                android:background="@null"
+                android:onClick="Navigate"
                 android:src="@drawable/navigation" />
 
-             <ImageButton
-                 android:id="@+id/btnLike"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:gravity="end"
-                 android:onClick="Like" android:background="@null"
-                 android:src="@drawable/blank_heart" />
+            <ImageButton
+                android:id="@+id/btnLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:background="@null"
+                android:gravity="end"
+                android:onClick="Like"
+                android:src="@drawable/blank_heart" />
 
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/txtLikeCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|right"
                 android:gravity="end"
                 android:text="229"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/txtDiscId"
+                android:layout_width="0px"
+                android:layout_height="0px"
+                android:gravity="end"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="invisible" />
 
 
         </LinearLayout>

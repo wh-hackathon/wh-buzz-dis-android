@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.google.*;
+
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.appindexing.Action;
@@ -34,11 +36,12 @@ import java.util.List;
 import java.util.ListIterator;
 //import gms.drive.*;
 
-public class LandingActivity extends FragmentActivity implements ResultCallback,GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener {
+public class LandingActivity extends FragmentActivity implements ResultCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private List<Geofence> mGeofenceList=  new ArrayList<Geofence>();
+    private List<Geofence> mGeofenceList = new ArrayList<Geofence>();
     private PendingIntent mGeofencePendingIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,30 +78,30 @@ public class LandingActivity extends FragmentActivity implements ResultCallback,
 
     private GeofencingRequest getGeofencingRequest() {
 
-        try{GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        try {
+            GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
             builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
             builder.addGeofences(mGeofenceList);
             return builder.build();
-    }catch(Exception x)
-        {
-            Log.d("tag",x.toString());
-        return null;
+        } catch (Exception x) {
+            Log.d("tag", x.toString());
+            return null;
         }
     }
+
     private PendingIntent getGeofencePendingIntent() {
 
-    if (mGeofencePendingIntent != null) {
-        return mGeofencePendingIntent;
-    }
-    Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
 
-    PendingIntent x = PendingIntent.getService(this, 0, intent, PendingIntent.
-            FLAG_UPDATE_CURRENT);
-return x;
+        PendingIntent x = PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+        return x;
     }
 
-    public void CreateGeoFence(View view)
-    {
+    public void CreateGeoFence(View view) {
         TextView editText = (TextView) findViewById(R.id.textView_PM);
         editText.setText("PM can do this");
 
@@ -108,12 +111,12 @@ return x;
                 getGeofencePendingIntent()
         ).setResultCallback(this); // Result processed in onResult().
 
-Log.d("tag","deleted");
+        Log.d("tag", "deleted");
 
         try {
             mGeofenceList.add(new Geofence.Builder().setRequestId("Myfirst")
                     .setCircularRegion(
-                            18.5156040, 73.7819050,
+                            18.522990, 73.779818,
                             500
                     )
                     .setExpirationDuration(99999999)
@@ -122,8 +125,7 @@ Log.d("tag","deleted");
                     .build());
             Log.d("TAG", "created geofence");
 
-        }catch (Exception x)
-        { //Log.d()
+        } catch (Exception x) { //Log.d()
             Log.d("TAG", x.toString());
             Log.d("TAG", x.getMessage());
 
@@ -139,8 +141,7 @@ Log.d("tag","deleted");
             ).setResultCallback(this);
             Log.d("TAG", "added geofence");
 
-        }catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Log.d("TAG", ex.getMessage());
         }
     }
@@ -153,7 +154,7 @@ Log.d("tag","deleted");
         editText.setText("Conected to Google aPI ");
 
 
-      Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
@@ -174,7 +175,6 @@ Log.d("tag","deleted");
 
     @Override
     public void onResult(Result result) {
-
 
 
     }
