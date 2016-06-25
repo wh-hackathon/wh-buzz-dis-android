@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -63,6 +64,9 @@ public class DiscBuzzLanding extends Activity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_disc_buzz_landing);
+
+        displaySettings();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         context = this;
@@ -79,8 +83,9 @@ public class DiscBuzzLanding extends Activity
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                  //  Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    //        .setAction("Action", null).show();
+                    redirectToSettings();
                 }
             });
 
@@ -97,6 +102,18 @@ public class DiscBuzzLanding extends Activity
         } finally {
         }
 
+    }
+
+    protected void redirectToSettings() {
+        Intent settingsSreen = new Intent(getBaseContext(), SettingsActivity.class);
+        this.startActivity(settingsSreen);
+    }
+    protected void displaySettings() {
+        SharedPreferences settings = getSharedPreferences(Constants.APP_NAME, 0);
+        String selectedRegions = settings.getString(Constants.SETTINGS_REGIONS_STR, "");
+        String selectedCategories = settings.getString(Constants.SETTINGS_CATEGORIES_STR, "");
+        if (selectedRegions.isEmpty() && selectedCategories.isEmpty())
+            redirectToSettings();
     }
 
     @Override
@@ -166,8 +183,9 @@ public class DiscBuzzLanding extends Activity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_manage) {
-
+        }
+        else if( id == R.id.nav_settings) {
+            redirectToSettings();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -205,10 +223,6 @@ public class DiscBuzzLanding extends Activity
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setConnectTimeout(500000);
                 connection.setRequestProperty("Content-Type", "application/json");
-                ContentValues params1 = new ContentValues();
-                params1.put("latitude", "18.523331");
-                params1.put("longitude", "73.7775214");
-                params1.put("distance", "2");
                 connection.setInstanceFollowRedirects(false);
                 connection.setRequestMethod("POST");
 

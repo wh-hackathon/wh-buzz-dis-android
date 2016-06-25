@@ -21,8 +21,6 @@
         <activity android:name=".LandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="com.whitehedge.pravinm.hackthonwh.ResultActivity" />
-
             </intent-filter>
         </activity>
 
@@ -51,10 +49,12 @@
             android:label="@string/title_activity_disc_buzz_landing"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".SettingsActivity">
         </activity>
     </application>
 
